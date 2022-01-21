@@ -43,8 +43,6 @@ class MLP(nn.Module):
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        x = x.view(-1, 28*28)
-
         out = self.layer1(x)
         out = self.sigmoid(out)
         out = self.layer2(out)
@@ -79,7 +77,7 @@ for epoch in range(training_epochs):
 
     for img, label in data_loader:
         # img 설정
-        img = img.to(device)
+        img = img.view(-1, 28*28).to(device)
 
         # target 설정
         label = NumberToTarget(label, batch_size)
