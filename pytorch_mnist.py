@@ -53,6 +53,17 @@ class MLP(nn.Module):
         return out
 
 
+# target이 숫자로 되어있어서 10개의 노드로 변환 ex) 8 -> 0000000010
+def NumberToTarget(target, batch):
+    target = target.tolist()
+    for b in range(batch):
+        tar = [0 for i in range(10)]
+        tar[target[b]] = 1
+        target[b] = tar
+
+    return torch.tensor(target)
+
+
 model = MLP().to(device)  # MLP모델
 criterion = nn.MSELoss()  # loss 구하기
 
@@ -63,34 +74,21 @@ total_batch = len(data_loader)
 model.train()  # set the model to train mode
 print("Learning Started")
 
-def targetUpdate(target, batch):
-    for b in range(batch):
-        tar = [0 for i in range(10)]
-        print(target[b])
-        tar[target[b]] = 1
-        target[b] = tar
-
-
 for epoch in range(training_epochs):
     avg_loss = 0
 
     for img, label in data_loader:
-        # image is already size of (28x28), no reshape
-        # label is not one-hot encoded
+        # img 설정
         img = img.to(device)
 
+        # target 설정
+        label = NumberToTarget(label, batch_size)
         label = label.to(device)
         label = label.to(torch.float32)
-        #targetUpdate(label, batch_size)
 
         optimizer.zero_grad()   # 이걸 빼먹으면 학습이 안됌
         hypothesis = model(img)
-        # hypothesis = torch.max(hypothesis, dim=1)[1]
-        # hypothesis = hypothesis.to(torch.float32)
-        print(hypothesis)
-        print(label)
-        loss = criterion(hypothesis, label.view(-1, 1))
-        print(loss)
+        loss = criterion(hypothesis, label)
         loss.backward()
         optimizer.step()
 
@@ -99,3 +97,14 @@ for epoch in range(training_epochs):
     print('[Epoch: {:>4}] loss = {:>.9}'.format(epoch + 1, avg_loss))
 
 print('Learning Finished!')
+
+# test model using test sets
+model.eval()
+with torch.no_grad():  # test set으로 데이터를 다룰 때에는 gradient를 주면 안된다.
+    X_test = mnist_test.data.view(-1, 28 * 28).float().to(device)
+    Y_test = mnist_test.targets.to(device)
+
+    prediction = model(X_test)
+    correct_prediction = torch.argmax(prediction, dim=1) == Y_test  # 결과값이랑 실제값이랑 같은지 확인
+    accuracy = correct_prediction.float().mean()  # 평균으로 전체 정확도 확인
+    print('accuracy:', accuracy.item())
