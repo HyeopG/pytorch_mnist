@@ -14,7 +14,7 @@ if device == "cuda":
 
 # parameters
 learning_rate = 0.0001
-training_epochs = 15
+training_epochs = 50
 batch_size = 100
 
 # MNIST dataset
@@ -93,6 +93,9 @@ for epoch in range(training_epochs):
         avg_loss += loss / total_batch
 
     print('[Epoch: {:>4}] loss = {:>.9}'.format(epoch + 1, avg_loss))
+
+    if avg_loss < 0.01:
+        break
 
 print('Learning Finished!')
 

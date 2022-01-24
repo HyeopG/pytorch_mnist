@@ -33,24 +33,6 @@ data_loader = torch.utils.data.DataLoader(dataset=mnist_train,
                                           shuffle=True,
                                           drop_last=True)
 
-# class MLP(nn.Module):
-#     def __init__(self):
-#         super(MLP, self).__init__()
-#         self.layer1 = nn.Linear(784, 300, bias=True)  # 입력층(784) -> 은닉1층(300)
-#         self.layer2 = nn.Linear(300, 100, bias=True)  # 은닉1층(300) -> 은닉2층(100)
-#         self.layer3 = nn.Linear(100, 10, bias=True)  # 은닉2층(100) -> 출력층(10)
-#         self.sigmoid = nn.Sigmoid()
-#
-#     def forward(self, x):
-#         x = x.view(-1, 28*28)
-#
-#         out = self.layer1(x)
-#         out = self.sigmoid(out)
-#         out = self.layer2(out)
-#         out = self.sigmoid(out)
-#         out = self.layer3(out)
-#         return out
-
 
 # target이 숫자로 되어있어서 10개의 노드로 변환 ex) 8 -> 0000000010
 def NumberToTarget(target, batch):
@@ -90,7 +72,7 @@ for epoch in range(training_epochs):
         label = label.to(device)
         label = label.to(torch.float32)
 
-        optimizer.zero_grad()   # 이걸 빼먹으면 학습이 안됌
+        optimizer.zero_grad()
         hypothesis = model(img)
         loss = criterion(hypothesis, label)
         loss.backward()
@@ -99,6 +81,9 @@ for epoch in range(training_epochs):
         avg_loss += loss / total_batch
 
     print('[Epoch: {:>4}] loss = {:>.9}'.format(epoch + 1, avg_loss))
+
+    if avg_loss < 0.01:
+        break
 
 print('Learning Finished!')
 
