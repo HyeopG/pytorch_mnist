@@ -13,8 +13,8 @@ if device == "cuda":
     torch.cuda.manual_seed_all(777)
 
 # parameters
-learning_rate = 0.0001
-training_epochs = 50
+learning_rate = 0.1
+training_epochs = 500
 batch_size = 100
 
 # MNIST dataset
@@ -50,7 +50,6 @@ class MLP(nn.Module):
         out = self.layer3(out)
         return out
 
-
 # target이 숫자로 되어있어서 10개의 노드로 변환 ex) 8 -> 0000000010
 def NumberToTarget(target, batch):
     target = target.tolist()
@@ -65,7 +64,7 @@ def NumberToTarget(target, batch):
 model = MLP().to(device)  # MLP모델
 criterion = nn.MSELoss()  # loss 구하기
 
-optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 
 # train model
 total_batch = len(data_loader)
@@ -108,4 +107,28 @@ with torch.no_grad():  # test set으로 데이터를 다룰 때에는 gradient�
     prediction = model(X_test)
     correct_prediction = torch.argmax(prediction, dim=1) == Y_test  # 결과값이랑 실제값이랑 같은지 확인
     accuracy = correct_prediction.float().mean()  # 평균으로 전체 정확도 확인
+
     print('accuracy:', accuracy.item())
+
+
+# # weight Save
+# PATH = './weights/'
+#
+# torch.save(model, PATH + 'model.pt')  # 전체 모델 저장
+# torch.save(model.state_dict(), PATH + 'model_state_dict.pt')  # 모델 객체의 state_dict 저장
+# torch.save({
+#     'model': model.state_dict(),
+#     'optimizer': optimizer.state_dict()
+# }, PATH + 'all.tar')  # 여러 가지 값 저장, 학습 중 진행 상황 저장을 위해 epoch, loss 값 등 일반 scalar값 저장 가능
+
+# ------------------------------------------------------------------------------------------------------------------
+
+# # weight Load
+# PATH = './weights/'
+#
+# model = torch.load(PATH + 'model.pt')  # 전체 모델을 통째로 불러옴, 클래스 선언 필수
+# model.load_state_dict(torch.load(PATH + 'model_state_dict.pt'))  # state_dict를 불러 온 후, 모델에 저장
+#
+# checkpoint = torch.load(PATH + 'all.tar')  # dict 불러오기
+# model.load_state_dict(checkpoint['model'])
+# optimizer.load_state_dict(checkpoint['optimizer'])
