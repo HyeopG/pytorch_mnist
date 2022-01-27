@@ -48,6 +48,7 @@ class MLP(nn.Module):
         out = self.layer2(out)
         out = self.sigmoid(out)
         out = self.layer3(out)
+        out = self.sigmoid(out)
         return out
 
 # target이 숫자로 되어있어서 10개의 노드로 변환 ex) 8 -> 0000000010

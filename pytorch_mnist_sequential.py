@@ -49,7 +49,7 @@ def NumberToTarget(target, batch):
 model = nn.Sequential(
     nn.Linear(784, 300, bias=True), nn.Sigmoid(),
     nn.Linear(300, 100, bias=True), nn.Sigmoid(),
-    nn.Linear(100, 10, bias=True)
+    nn.Linear(100, 10, bias=True), nn.Sigmoid()
 ).to(device)
 
 criterion = nn.MSELoss()  # loss 구하기

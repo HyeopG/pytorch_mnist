@@ -43,6 +43,7 @@ class MLP(nn.Module):
             nn.Linear(300, 100, bias=True),  # 은닉1층(300) -> 은닉2층(100)
             nn.Sigmoid(),
             nn.Linear(100, 10, bias=True),  # 은닉2층(100) -> 출력층(10)
+            nn.Sigmoid()
         )
 
     def forward(self, x):
