@@ -2,6 +2,8 @@ from torch import nn, optim
 from torch.utils.data import dataset
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
+import numpy as np
 
 import torch.nn.init
 
@@ -38,7 +40,6 @@ test_loader = torch.utils.data.DataLoader(dataset=mnist_test,
                                           shuffle=True,
                                           drop_last=True)
 
-
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
@@ -66,15 +67,49 @@ class CNN(nn.Module):
         self.fc2 = torch.nn.Linear(625, 10, bias=True)
         torch.nn.init.xavier_uniform_(self.fc2.weight)
 
-
     def forward(self, x):
+        plt_count=1
+        plt_count = Draw(x, 2, 1, plt_count, 0)
+        plt_count = Draw(x, 1, 1, plt_count, 1)
         out = self.layer1(x)
+        plt_count = Draw(out, 2, 32, plt_count, 0)
+        plt_count = Draw(out, 1, 32, plt_count, 1)
         out = self.layer2(out)
+        plt_count = Draw(out, 2, 64, plt_count, 0)
+        plt_count = Draw(out, 1, 64, plt_count, 1)
         out = self.layer3(out)
+        plt_count = Draw(out, 2, 128, plt_count, 0)
+        plt_count = Draw(out, 1, 128, plt_count, 1)
         out = out.view(out.size(0), -1)
         out = self.layer4(out)
         out = self.fc2(out)
+        plt.show()
         return out
+
+# draw Instance
+x_draw = 4
+y_draw = 3
+# image 출력
+def Draw(image, num, size, plt_count, order=1):     # image = 이미지, num = 몇개를, plt_count = 어디에, x = x축 크기, y = y축 크기, order = 오름내림차순
+    image = image.detach().cpu().numpy()
+    x = image.shape[2]
+    y = image.shape[3]
+    image = image.reshape(-1, x, y, 1)
+    draw = []
+    for i in range(num):
+        if order == 0:    # 앞부터
+            count = size * i
+            draw.append(image[count])
+        else:           # 뒤부터
+            count = size * (i+1) - (size-1)
+            draw.append(image[-count])
+
+    for i in range(num):
+        plt.subplot(x_draw, y_draw, plt_count)        # 3 3 총 9개중 plt_count번째에 출력
+        plt_count += 1
+        plt.imshow(np.reshape(draw[i], [x, y]), cmap="gray")
+
+    return plt_count
 
 # target이 숫자로 되어있어서 10개의 노드로 변환 ex) 8 -> 0000000010
 def NumberToTarget(target, batch):
