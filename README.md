@@ -42,8 +42,9 @@
 ![image](https://user-images.githubusercontent.com/87799990/177899801-327cf44c-7b3c-4024-afa5-d28109b43c80.png)
 ***
 ## Loss를 그래프로 나타낸 값
+***
 ### 4가지 전부
-![image](https://user-images.githubusercontent.com/87799990/177899866-ca36a82f-f698-4171-83b6-e36a645c28ce.png)
+![image](https://user-images.githubusercontent.com/87799990/177900416-7e2d885f-f154-44a0-b40e-32f05e1bcfae.png)
 ***
 ### 4가지 중 가장 높게 있는 Cross + SGD를 제외한 그래프
 ![image](https://user-images.githubusercontent.com/87799990/177899907-2be9f174-bc45-436c-9abf-13df1a3dc357.png)
